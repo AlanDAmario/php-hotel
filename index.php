@@ -62,6 +62,7 @@ if ($has_parking) {
     //ANDIAMO A CICLARE NUOVAMENTE HOTELS, iterando su hotel
     foreach ($filtered_hotels as $hotel) {
         //SE PARKING è UGUALE A TRUE (=== TRUE)
+        //[parking] è LA POSIZIONE DEFINITO NELL ARRAY PER ITERARCI SOPRA
         if ($hotel['parking']) {
             // ALLORA ALL INTERNO DI WITH PARKING ANDIAMO A STAMPARE/PUSHARE (CON UN METODO DI PHP) TUTTI GLI HOTEL CHE DISPONGO DEL PARCHEGGIO
             // NELLA PRIMA POSIZIONE DISPONIBILE '[]', ALLORA INSERIAMO GLI HOTEL DISPONIBILI
@@ -72,6 +73,24 @@ if ($has_parking) {
     //ALLA FINE DEL CICLO POSSIAMO DICHIARARE CHE IL NUOVO FILTERED_HOTELS è WITH_PARKING
 
     $filtered_hotels = $with_parking;
+}
+
+
+//******************************************************************************************* */
+//RICERCA PER STELLE
+$has_stars = !empty($_GET['has-stars']); //CARATTERE BOOL
+//PUò SUCCEDERE CHE NON ABBIAMO VALORI TIPIZZATI QUINDI DOBBIAMO TRASFORMARLI
+//L'operatore di coalescenza nulla ?? in PHP è utilizzato per restituire il valore di una variabile se questa è definita e non è nulla, altrimenti restituisce un valore di default. Questo operatore è molto utile per fornire valori predefiniti per variabili che potrebbero non essere impostate.
+$stars = $_GET['has-stars'] ?? 0; //CARATTERE INTERO
+if ($has_stars) {
+    $with_stars = [];
+    foreach ($filtered_hotels as $hotel) {
+        // INTVALL() converte una variabile in un numero intero
+        if ($hotel['vote'] >= intval($stars)) {
+            $with_stars[] = $hotel;
+        }
+    }
+    $filtered_hotels = $with_stars;
 }
 ?>
 
@@ -101,11 +120,11 @@ if ($has_parking) {
                     </label>
                 </div>
                 <div class="col-auto">
-                    <select class="form-select" aria-label="Default select example">
-                        <option selected>Open this select menu</option>
-                        <option value="1">One</option>
-                        <option value="2">Two</option>
-                        <option value="3">Three</option>
+                    <select class="form-select" aria-label="Default select example" name="has-stars">
+                        <option selected value="">Seleziona stelle</option>
+                        <?php for ($i = 1; $i <= 5; $i++) : ?>
+                            <option><?php echo $i; ?> <?php echo $i === 1 ? 'star' : 'stars'; ?></option>
+                        <?php endfor ?>
                     </select>
                 </div>
                 <div class="col">
@@ -115,46 +134,36 @@ if ($has_parking) {
         </form>
 
     </div>
-    </form>
-    </div>
-    </div>
     <hr>
+
     <div class="container p-3">
+        <?php if (empty($filtered_hotels)) : ?>
+            <p>Nessun risultato trovato.</p>
+        <?php else : ?>
+            <table class="table table-striped">
+                <thead>
 
-        <!-- <ul> MODALITà CON STRUTTURA LISTA*******************************
-            <?php foreach ($filtered_hotels as $hotel) : ?>
-                <li>
-                    <h2> <?php echo $hotel['name'] ?></h2>
-                    <div><?php echo $hotel['description'] ?></div>
-                    <div><?php echo $hotel['parking'] ? 'si' : 'no' ?></div>
-                    <div><?php echo $hotel['vote'] ?></div>
-                    <div><?php echo $hotel['distance_to_center'] ?></div>
-                </li>
-            <?php endforeach; ?>
-        </ul>**************************************************************** -->
-        <table class="table table-striped">
-            <thead>
-
-                <tr>
-                    <th scope="col">Nome</th>
-                    <th scope="col">Descrizione</th>
-                    <th scope="col">Parcheggio</th>
-                    <th scope="col">Voto</th>
-                    <th scope="col">Distanza dal centro</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($filtered_hotels as $hotel) : ?>
                     <tr>
-                        <th scope="row"><?php echo $hotel['name'] ?></th>
-                        <td><?php echo $hotel['description'] ?></td>
-                        <td><?php echo $hotel['parking'] ? 'si' : 'no' ?></td>
-                        <td><?php echo $hotel['vote']  ?></td>
-                        <td><?php echo $hotel['distance_to_center'] ?> km</td>
+                        <th scope="col">Nome</th>
+                        <th scope="col">Descrizione</th>
+                        <th scope="col">Parcheggio</th>
+                        <th scope="col">Voto</th>
+                        <th scope="col">Distanza dal centro</th>
                     </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    <?php foreach ($filtered_hotels as $hotel) : ?>
+                        <tr>
+                            <th scope="row"><?php echo $hotel['name'] ?></th>
+                            <td><?php echo $hotel['description'] ?></td>
+                            <td><?php echo $hotel['parking'] ? 'si' : 'no' ?></td>
+                            <td><?php echo $hotel['vote']  ?></td>
+                            <td><?php echo $hotel['distance_to_center'] ?> km</td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        <?php endif; ?>
     </div>
 
 </body>
