@@ -40,7 +40,8 @@ $hotels = [
 
 ];
 
-var_dump($hotels);
+//var_dump($hotels);
+
 
 ?>
 
@@ -56,7 +57,18 @@ var_dump($hotels);
 </head>
 
 <body>
-
+    <h1>Hotels</h1>
+    <ul>
+        <?php foreach ($hotels as $hotel) : ?>
+            <li>
+                <h2> <?php echo $hotel['name'] ?></h2>
+                <div><?php echo $hotel['description'] ?></div>
+                <div><?php echo $hotel['parking'] ? 'si': 'no' ?></div>
+                <div><?php echo $hotel['vote'] ?></div>
+                <div><?php echo $hotel['distance_to_center'] ?></div>
+            </li>
+        <?php endforeach; ?>
+    </ul>
 </body>
 
 </html>
